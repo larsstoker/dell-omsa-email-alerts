@@ -18,7 +18,7 @@ $alertDefinitions = "powersupply|Power supply failure", "powersupplywarn|Power s
 $chassisInfo = Invoke-Expression "omreport chassis info" | Out-String
 $storageInfo = Invoke-Expression "omreport storage vdisk" | Out-String
 # Default mail arguments
-$defaultMailArgs = @{
+$mailArgs = @{
   To = "example@example.com"
   From = "example@example.com"
   Credential = New-Object System.Management.Automation.PSCredential ("example@example.com", ("password" | ConvertTo-SecureString -AsPlainText -Force ))
@@ -64,7 +64,7 @@ elseif ($action -eq "email") {
   Invoke-Expression "omreport system alertlog -outc $PSScriptRoot\alertLog.txt"
   
   # Send the email
-  Send-MailMessage @defaultMailArgs -Subject $emailSubject -BodyAsHtml $htmlBody -Attachments "$PSScriptRoot\alertLog.txt"
+  Send-MailMessage @mailArgs -Subject $emailSubject -BodyAsHtml $htmlBody -Attachments "$PSScriptRoot\alertLog.txt"
 }
 # Send a test email
 elseif ($action -eq "testemail") {
@@ -76,7 +76,7 @@ elseif ($action -eq "testemail") {
             <pre>$storageInfo</pre>
             "
   
-  Send-MailMessage @defaultMailArgs -Subject $emailSubject -BodyAsHtml $htmlBody
+  Send-MailMessage @mailArgs -Subject $emailSubject -BodyAsHtml $htmlBody
 } 
 # If no arguments were used
 elseif (!($action)) {
