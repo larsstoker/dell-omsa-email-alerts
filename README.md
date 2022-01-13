@@ -77,3 +77,9 @@ This script is based on [this script](https://www.tachytelic.net/2011/09/dell-po
   Alert action(s) configured successfully.
   PS C:\Scripts>
   ```
+
+## Test functionality
+You can test if the script did it's job by temporarily lowering the `Temperature Threshold` settings.
+![](https://raw.githubusercontent.com/larsstoker/dell-omsa-email-alerts/master/images/omsaTempThreshold.jpg)
+
+This should generate an alert and send out an email.
