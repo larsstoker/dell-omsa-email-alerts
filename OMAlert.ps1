@@ -77,7 +77,16 @@ elseif ($action -eq "testemail") {
             "
   
   Send-MailMessage @mailArgs -Subject $emailSubject -BodyAsHtml $htmlBody
-} 
+}
+# Clear alert configuration
+elseif ($action -eq "clearall") {
+  for ($i = 0; $i -lt $alertDefinitions.count; $i++) {
+    $alertCommand = $alertDefinitions[$i].split("|")[0]
+  
+    $configureOma = "omconfig system alertaction event=$alertCommand clearall=true"
+    Invoke-Expression $configureOma
+  }
+}
 # If no arguments were used
 elseif (!($action)) {
   Write-Host "No agruments used, exiting script..."
