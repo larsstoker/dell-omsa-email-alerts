@@ -83,3 +83,6 @@ You can test if the script did it's job by temporarily lowering the `Temperature
 ![](https://raw.githubusercontent.com/larsstoker/dell-omsa-email-alerts/master/images/omsaTempThreshold.jpg)
 
 This should generate an alert and send out an email.
+
+## Clear configuration
+To clear all alert configurations, execute the script with the param `clearall`.
