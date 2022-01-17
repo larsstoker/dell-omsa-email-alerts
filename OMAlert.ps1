@@ -36,7 +36,9 @@ if ($action -eq "configure") {
   for ($i = 0; $i -lt $alertDefinitions.count; $i++) {
     # Split $alertDefinitions at the "|" to get the command and description.
     # 0 being the command used for the actual OMA command line config.
+    # 1 being the description used for output
     $alertCommand = $alertDefinitions[$i].split("|")[0]
+    $alertDescription = $alertDefinitions[$i].split("|")[1]
 
     # Create .bat file for each action, for some reason it's not possible to passthrough powershell.exe with params through omconfig.
     # It does work if it's manually specified in the Webui but that won't do for this script.
@@ -44,8 +46,13 @@ if ($action -eq "configure") {
     $batCommand | Out-File -FilePath "$PSScriptRoot\$alertCommand.bat" -Encoding ascii -Force
 
     # Configure oma to execute the .bat files
-    $configureOma = "omconfig system alertaction event=$alertCommand execappath=$PSScriptRoot\$alertCommand.bat"
-    Invoke-Expression $configureOma
+    $configureOma = Invoke-Expression "omconfig system alertaction event=$alertCommand execappath=$PSScriptRoot\$alertCommand.bat" | Out-String
+    if ($configureOma -like "*successfully*") {
+      Write-Host "Configured alert: $alertDescription"
+    }
+    elseif ($configureOma -like "*not supported*") {
+      Write-Host "The configuration operation is not supported on: $alertDescription"
+    }
   }
 }
 # Send an email
@@ -75,16 +82,31 @@ elseif ($action -eq "testemail") {
             <br>
             <pre>$storageInfo</pre>
             "
-  
-  Send-MailMessage @mailArgs -Subject $emailSubject -BodyAsHtml $htmlBody
+
+  try {
+    Send-MailMessage @mailArgs -Subject $emailSubject -BodyAsHtml $htmlBody -ErrorAction Stop
+    Write-Host "Test email sent successfully"
+  }
+  catch {
+    Write-Host "Could not send email: $_"
+  }
 }
 # Clear alert configuration
 elseif ($action -eq "clearall") {
   for ($i = 0; $i -lt $alertDefinitions.count; $i++) {
+    # Split $alertDefinitions at the "|" to get the command and description.
+    # 0 being the command used for the actual OMA command line config.
+    # 1 being the description used for output
     $alertCommand = $alertDefinitions[$i].split("|")[0]
+    $alertDescription = $alertDefinitions[$i].split("|")[1]
   
-    $configureOma = "omconfig system alertaction event=$alertCommand clearall=true"
-    Invoke-Expression $configureOma
+    $configureOma = Invoke-Expression "omconfig system alertaction event=$alertCommand clearall=true" | Out-String
+    if ($configureOma -like "*successfully*") {
+      Write-Host "Cleared alert: $alertDescription"
+    }
+    elseif ($configureOma -like "*not supported*") {
+      Write-Host "The configuration operation is not supported on: $alertDescription"
+    }
   }
 }
 # If no arguments were used
