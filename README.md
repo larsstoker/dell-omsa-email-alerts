@@ -11,6 +11,7 @@ This script is based on [this script](https://www.tachytelic.net/2011/09/dell-po
 # How to use
 - Place the `OMAlert.ps1` in a folder on your system, mine is under `C:\Scripts\`. 
 - Edit the variables under `$mailArgs` to match your settings:
+  > :warning: It's best to use an encrypted file instead of a plaintext password in a script, the below is just a simple example.
   ```PowerShell
   # Default mail arguments
   $mailArgs = @{
